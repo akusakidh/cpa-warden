@@ -1,6 +1,7 @@
 # cpa-warden
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/fantasticjoe/cpa-warden)](https://github.com/fantasticjoe/cpa-warden/releases/latest)
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![uv](https://img.shields.io/badge/deps-uv-6f42c1)
 
