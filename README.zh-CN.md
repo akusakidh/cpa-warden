@@ -154,23 +154,47 @@ uv run python cpa_warden.py
 
 非交互运行示例：
 
-```bash
-uv run python cpa_warden.py --mode scan
-uv run python cpa_warden.py --mode scan --debug
-uv run python cpa_warden.py --mode scan --target-type codex --provider openai
-uv run python cpa_warden.py --mode maintain
-uv run python cpa_warden.py --mode maintain --no-delete-401 --no-auto-reenable
-uv run python cpa_warden.py --mode maintain --quota-action delete
-uv run python cpa_warden.py --mode maintain --quota-disable-threshold 0.1
-uv run python cpa_warden.py --mode maintain --reenable-scope managed
-uv run python cpa_warden.py --mode maintain --quota-action delete --yes
-uv run python cpa_warden.py --mode upload --upload-dir ./auth_files
-uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-recursive --upload-workers 50
-uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-method multipart --upload-force
-uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files
-uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --refill-strategy fixed --upload-dir ./auth_files
-uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files --auto-register --register-command 'python /opt/register-machine/register.py'
-```
+`scan` 场景：
+
+- 基础清单扫描与 usage 探测（不修改远端状态）：  
+  `uv run python cpa_warden.py --mode scan`
+- 排查探测问题，开启更详细终端日志：  
+  `uv run python cpa_warden.py --mode scan --debug`
+- 只扫描特定账号分组（type + provider）：  
+  `uv run python cpa_warden.py --mode scan --target-type codex --provider openai`
+
+`maintain` 场景：
+
+- 按当前配置执行标准维护流程：  
+  `uv run python cpa_warden.py --mode maintain`
+- 先看维护结果，不删除 `401` 且不自动恢复：  
+  `uv run python cpa_warden.py --mode maintain --no-delete-401 --no-auto-reenable`
+- 对限额账号使用更激进策略（直接删除）：  
+  `uv run python cpa_warden.py --mode maintain --quota-action delete`
+- 当剩余额度比例降到 10% 时提前禁用：  
+  `uv run python cpa_warden.py --mode maintain --quota-disable-threshold 0.1`
+- 仅恢复本工具曾管理过的账号：  
+  `uv run python cpa_warden.py --mode maintain --reenable-scope managed`
+- 非交互执行危险维护（跳过确认）：  
+  `uv run python cpa_warden.py --mode maintain --quota-action delete --yes`
+
+`upload` 场景：
+
+- 从单个目录上传认证文件：  
+  `uv run python cpa_warden.py --mode upload --upload-dir ./auth_files`
+- 递归扫描子目录并提高并发做批量上传：  
+  `uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-recursive --upload-workers 50`
+- 使用 multipart 上传并强制尝试同名覆盖：  
+  `uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-method multipart --upload-force`
+
+`maintain-refill` 场景：
+
+- 先维护，再按缺口补充到目标有效账号数：  
+  `uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files`
+- 先维护，再按固定批量策略补充上传：  
+  `uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --refill-strategy fixed --upload-dir ./auth_files`
+- 补充后仍不足时，启用外部注册命令兜底：  
+  `uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files --auto-register --register-command 'python /opt/register-machine/register.py'`
 
 支持的 CLI 参数：
 

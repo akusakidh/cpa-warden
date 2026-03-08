@@ -154,23 +154,47 @@ uv run python cpa_warden.py
 
 Non-interactive examples:
 
-```bash
-uv run python cpa_warden.py --mode scan
-uv run python cpa_warden.py --mode scan --debug
-uv run python cpa_warden.py --mode scan --target-type codex --provider openai
-uv run python cpa_warden.py --mode maintain
-uv run python cpa_warden.py --mode maintain --no-delete-401 --no-auto-reenable
-uv run python cpa_warden.py --mode maintain --quota-action delete
-uv run python cpa_warden.py --mode maintain --quota-disable-threshold 0.1
-uv run python cpa_warden.py --mode maintain --reenable-scope managed
-uv run python cpa_warden.py --mode maintain --quota-action delete --yes
-uv run python cpa_warden.py --mode upload --upload-dir ./auth_files
-uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-recursive --upload-workers 50
-uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-method multipart --upload-force
-uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files
-uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --refill-strategy fixed --upload-dir ./auth_files
-uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files --auto-register --register-command 'python /opt/register-machine/register.py'
-```
+`scan` scenarios:
+
+- Baseline inventory and usage probe without changing remote state:  
+  `uv run python cpa_warden.py --mode scan`
+- Troubleshoot probing behavior with verbose terminal logs:  
+  `uv run python cpa_warden.py --mode scan --debug`
+- Focus on a specific account segment (type + provider):  
+  `uv run python cpa_warden.py --mode scan --target-type codex --provider openai`
+
+`maintain` scenarios:
+
+- Standard maintenance pass using configured defaults:  
+  `uv run python cpa_warden.py --mode maintain`
+- Review maintenance results without deleting `401` or auto re-enable:  
+  `uv run python cpa_warden.py --mode maintain --no-delete-401 --no-auto-reenable`
+- Treat quota-limited accounts aggressively by deleting them:  
+  `uv run python cpa_warden.py --mode maintain --quota-action delete`
+- Disable accounts early when remaining quota ratio drops to 10%:  
+  `uv run python cpa_warden.py --mode maintain --quota-disable-threshold 0.1`
+- Re-enable only accounts previously managed by this tool:  
+  `uv run python cpa_warden.py --mode maintain --reenable-scope managed`
+- Run destructive maintenance non-interactively (skip confirmation):  
+  `uv run python cpa_warden.py --mode maintain --quota-action delete --yes`
+
+`upload` scenarios:
+
+- Upload auth files from a single directory:  
+  `uv run python cpa_warden.py --mode upload --upload-dir ./auth_files`
+- Bulk upload across nested folders with higher concurrency:  
+  `uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-recursive --upload-workers 50`
+- Use multipart upload and force same-name overwrite attempts:  
+  `uv run python cpa_warden.py --mode upload --upload-dir ./auth_files --upload-method multipart --upload-force`
+
+`maintain-refill` scenarios:
+
+- Maintain first, then refill only the gap to target capacity:  
+  `uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files`
+- Maintain first, then refill with a fixed-size upload batch:  
+  `uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --refill-strategy fixed --upload-dir ./auth_files`
+- Enable external register fallback when refill still misses threshold:  
+  `uv run python cpa_warden.py --mode maintain-refill --min-valid-accounts 200 --upload-dir ./auth_files --auto-register --register-command 'python /opt/register-machine/register.py'`
 
 Available CLI options:
 
